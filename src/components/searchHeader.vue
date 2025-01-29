@@ -26,6 +26,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import { useWorldStore } from '@/stores/world';
 
 // Variaveis Ref
 const city = ref('');
@@ -36,9 +37,9 @@ const icon = ref('');
 const searchQuery = ref('');
 const suggestions = ref([]);
 const apiKey = 'bed853d7af864a74813204847252801'; 
-const lon = ref('')
-const lat = ref('')
 
+// Store do Pinia
+const weatherStore = useWorldStore();
 // Clima
 async function fetchWeather(cityName) {
   try {
@@ -50,8 +51,8 @@ async function fetchWeather(cityName) {
     localTime.value = response.data.location.localtime.split(' ')[1]; 
     icon.value = response.data.current.condition.icon;
     condition.value = response.data.current.condition.text;
-    console.log(response.data.location.lat)
-    console.log(response.data.location.lon)
+
+    weatherStore.setCoordinates(response.data.location.lat, response.data.location.lon, response.data.location.name)
   } catch (error) {
     console.error('Erro ao buscar dados do clima:', error);
   }

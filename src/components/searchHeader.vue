@@ -15,10 +15,10 @@
         {{ suggestion.name }}, {{ suggestion.region }} - {{ suggestion.country }}
       </li>
     </ul>
-    <h1>Clima em {{ city }}</h1>
-    <p>Horário Local: {{ localTime }}</p>
-    <p>Temperatura: {{ temperature }}°C</p>
-    <p>Condição: {{ condition }}</p>
+    <h1>{{ city }}</h1>
+    <p>{{ localTime }}</p>
+    <p>{{ temperature }}°C</p>
+    <p>{{ condition }}</p>
     <img :src="icon" alt="Ícone do clima" v-if="icon" />
   </div>
 </template>

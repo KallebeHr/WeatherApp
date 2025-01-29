@@ -11,10 +11,19 @@ import 'leaflet/dist/leaflet.css';
 import { useWorldStore } from '@/stores/world';
 import { storeToRefs } from 'pinia';
 
-// Store do Pinia
+// Store
 const weatherStore = useWorldStore();
 
-// Acesse as coordenadas diretamente do store
+// Corrigir o caminho dos ícones do Leaflet
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png',
+  iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
+});
+
+
+// coordenadas store
 const { lat, lon, city } = storeToRefs(weatherStore);
 
 const mapContainer = ref(null);
@@ -22,17 +31,17 @@ let map = null;
 let marker = null;
 
 onMounted(() => {
-  // Verifica se o contêiner do mapa está disponível
+  // Verifica se o negocio lá do container tem tudo já
   if (mapContainer.value) {
-    // Inicializa o mapa com as coordenadas iniciais
+    // Inicio
     map = L.map(mapContainer.value).setView([lat.value, lon.value], 14);
 
-    // Adiciona o tile layer do OpenStreetMap
+    // 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">KallebeMax</a> Desenvolvedor'
     }).addTo(map);
 
-    // Adiciona um marcador inicial
+    // Marcador
     marker = L.marker([lat.value, lon.value])
       .addTo(map)
       .bindPopup(city.value)
@@ -40,10 +49,9 @@ onMounted(() => {
   }
 });
 
-// Observar mudanças nas coordenadas
+// Observador
 watch([lat, lon], ([newLat, newLon]) => {
   if (map && marker) {
-    // Atualiza a visualização do mapa e a posição do marcador
     map.setView([newLat, newLon], 14);
     marker.setLatLng([newLat, newLon]).bindPopup(city.value).openPopup();
   }

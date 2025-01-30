@@ -1,13 +1,17 @@
 <template>
-  <v-app>
+  <v-app class="container">
     <SearchHeader />
-    <World />
   </v-app>
 </template>
 
 <script setup>
 import SearchHeader from './components/searchHeader.vue';
-import World from './components/world.vue';
 
   //
 </script>
+
+<style scoped>
+.container{
+  background-color: #f6f6f6;
+}
+</style>

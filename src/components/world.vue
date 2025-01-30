@@ -63,13 +63,21 @@ watch([lat, lon], ([newLat, newLon]) => {
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 100%
+  height: auto;
 }
 #map {
-  height: 90%;
-  width: 90%;
+  height: 25rem;
+  width: 25rem;
   margin-top: 20px;
   border-radius: 10px;
   border: solid white 10px;
+}
+@media (max-width: 840px) {
+  #map {
+  height: 20rem;
+  width: 20rem;
+  margin-top: 20px;
+  border: none;
+}
 }
 </style>

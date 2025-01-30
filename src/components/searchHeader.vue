@@ -128,13 +128,11 @@ async function fetchWeather(cityName) {
     condition.value = response.data.current.condition.text;
     termica.value = response.data.current.feelslike_c;
     vento.value = response.data.current.gust_kph
-    console.log(response)
     weatherStore.setCoordinates(
       response.data.location.lat,
       response.data.location.lon,
       response.data.location.name
     );
-    console.log(response.data.location.lat, response.data.location.lon);
   } catch (error) {
     console.error('Erro ao buscar dados do clima:', error);
   }

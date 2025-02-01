@@ -17,6 +17,7 @@ import { createApp } from 'vue'
 const app = createApp(App)
 
 registerPlugins(app)
+
 app.use(createPinia())
 
 app.mount('#app')

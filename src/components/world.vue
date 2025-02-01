@@ -22,8 +22,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png',
 });
 
-
-// coordenadas store
+// Coordenadas da store
 const { lat, lon, city } = storeToRefs(weatherStore);
 
 const mapContainer = ref(null);
@@ -31,17 +30,16 @@ let map = null;
 let marker = null;
 
 onMounted(() => {
-  // Verifica se o negocio lá do container tem tudo já
+
   if (mapContainer.value) {
-    // Inicio
+    // Inicia o mapa
     map = L.map(mapContainer.value).setView([lat.value, lon.value], 14);
 
-    // 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">KallebeMax</a> Desenvolvedor'
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">KallebeMax</a> Desenvolvedor',
     }).addTo(map);
 
-    // Marcador
+    // marcador
     marker = L.marker([lat.value, lon.value])
       .addTo(map)
       .bindPopup(city.value)
@@ -59,25 +57,26 @@ watch([lat, lon], ([newLat, newLon]) => {
 </script>
 
 <style scoped>
-.container{
+.container {
   display: flex;
   justify-content: center;
+  justify-items: center;
   align-items: center;
-  height: auto;
+  height: 100vh;
 }
+
 #map {
-  height: 25rem;
-  width: 25rem;
-  margin-top: 20px;
+  height: 35rem;
+  width: 45rem;
   border-radius: 10px;
   border: solid white 10px;
 }
-@media (max-width: 840px) {
+
+@media (max-width: 740px) {
   #map {
-  height: 20rem;
-  width: 20rem;
-  margin-top: 20px;
-  border: none;
-}
+    height: 20rem;
+    width: 20rem;
+    border: none;
+  }
 }
 </style>

@@ -1,5 +1,4 @@
 <template>
-  <div>
     <header>
       <v-card-text>
         <div class="input-container">
@@ -32,81 +31,21 @@
       <h1>WeatherMax</h1>
     </header>
     <div class="opts">
-      <p>Sensação térmica {{ termica }}°C </p> <img :src="icon" class="icon" alt="Ícone do clima" v-if="icon" />
+      <img :src="icon" class="icon" alt="Ícone do clima" v-if="icon" /> 
+      <p >{{ city }} | {{ localTime }}</p>
+      <img :src="icon" class="icon" alt="Ícone do clima" v-if="icon" />
     </div>
-    <div class="container-center">
-    <div class="cardGeo">
-  <v-card
-    class="mx-auto cards"
-    max-width="368"
-  >
-    <v-card-item :title="city">
-      <template v-slot:subtitle>
-        <v-icon
-          class="me-1 pb-1"
-          color="error"
-          icon="mdi-alert"
-          size="18"
-        ></v-icon>
-
-        {{ condition }}
-      </template>
-    </v-card-item>
-
-    <v-card-text class="py-0">
-      <v-row align="center" no-gutters>
-        <v-col
-          class="text-h4"
-          cols="6"
-        >
-          {{ temperature }} &deg;c
-        </v-col>
-
-        <v-col class="text-right" cols="6">
-          <img :src="icon" alt="Ícone do clima" v-if="icon" />
-
-        </v-col>
-      </v-row>
-    </v-card-text>
-
-    <div class="d-flex py-3 justify-space-between">
-      <v-list-item
-        density="compact"
-        prepend-icon="mdi-clock-outline"
-        
-      >
-        <v-list-item-subtitle>{{ localTime }}</v-list-item-subtitle>
-      </v-list-item>
-
-      <v-list-item
-        density="compact"
-        prepend-icon="mdi-weather-windy"
-      >
-        <v-list-item-subtitle>{{ vento }} km/h</v-list-item-subtitle>
-      </v-list-item>
-    </div>
-
-  </v-card>
-    </div>
-    <world />
-  </div>
-
-  </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { useWorldStore } from '@/stores/world';
-import world from './world.vue';
 
 // Variáveis Ref
-const city = ref('');
 const temperature = ref('');
 const condition = ref('');
-const localTime = ref('');
 const termica = ref('')
-const icon = ref('');
 const searchQuery = ref('');
 const suggestions = ref([]);
 const vento = ref('')
@@ -114,29 +53,42 @@ const apiKey = 'bed853d7af864a74813204847252801';
 
 // pinia
 const weatherStore = useWorldStore();
+const localTime = computed(() => weatherStore.localTime)
+const city = computed(() => weatherStore.city)
+const icon = computed(() => weatherStore.icon)
 
-// Buscar dados da api
+// dados da API
 async function fetchWeather(cityName) {
   try {
     const response = await axios.get(
       `https://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${cityName}&lang=pt`
     );
-    city.value = response.data.location.name;
-    temperature.value = response.data.current.temp_c;
-    localTime.value = response.data.location.localtime.split(' ')[1];
-    icon.value = response.data.current.condition.icon;
-    condition.value = response.data.current.condition.text;
-    termica.value = response.data.current.feelslike_c;
-    vento.value = response.data.current.gust_kph
+    
     weatherStore.setCoordinates(
       response.data.location.lat,
       response.data.location.lon,
-      response.data.location.name
+      response.data.location.name,
+      response.data.location.localtime
     );
+    
+    weatherStore.setWeatherData({
+      temperature: response.data.current.temp_c,
+      condition: response.data.current.condition.text,
+      termica: response.data.current.feelslike_c,
+      icon: response.data.current.condition.icon,
+      vento: response.data.current.gust_kph,
+      humidity: response.data.current.humidity,
+      localTime: response.data.location.localtime.split(' ')[1]
+    });
   } catch (error) {
     console.error('Erro ao buscar dados do clima:', error);
   }
 }
+
+// ao iniciar
+onMounted(() => {
+  fetchWeather('Pedro II');
+});
 
 // Buscar sugestões
 async function fetchSuggestions() {
@@ -161,10 +113,7 @@ function selectSuggestion(suggestion) {
   fetchWeather(searchQuery.value);
 }
 
-// montar
-onMounted(() => {
-  fetchWeather('Pedro ii piaui');
-});
+
 </script>
 
 <style scoped>
@@ -185,13 +134,6 @@ header {
 }
 .icon{
   width: 32px;
-}
-.container-center{
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  height: 40rem;
-  width: 100%;
 }
 .opts {
   display: flex;
